@@ -1,6 +1,7 @@
-import { _decorator, Collider2D, Component, Contact2DType, ERigidBody2DType, HingeJoint2D, IPhysics2DContact, log, Node, RigidBody2D } from 'cc';
+import { _decorator, Camera, Collider2D, Component, Contact2DType, ERigidBody2DType, HingeJoint2D, IPhysics2DContact, log, Node, RigidBody2D, Vec2, Vec3 } from 'cc';
 import { Hole } from './Hole';
 import { Bolt } from './Bolt';
+import { GameController } from './GameController';
 const { ccclass, property } = _decorator;
 
 @ccclass('Timber')
@@ -17,14 +18,32 @@ export class Timber extends Component {
 
     listHole: Hole[] 
 
+    public isActive = true
+
+    public deltaDistance = 0.01
+
     start() {
         this.collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this)
         this.getListHole()
-        this.checkEnablePhysic()
+        setTimeout(() => {
+            this.checkEnablePhysic()
+        }, 1000)
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         log('Collision started with:', otherCollider.node.name)
+        if(otherCollider.node.name == "BottomTrigger" && this.isActive)
+        {
+            this.isActive = false
+            // this.rigidbody.enabled = false
+            // this.collider.enabled = false
+            // this.node.active = false
+            //this.node.destroy()
+            setTimeout(() => {
+                this.node.active = false
+            }, 2000)
+            GameController.instance.checkAndPerformNextAction()
+        }
     }
 
     update(deltaTime: number) {
@@ -43,7 +62,13 @@ export class Timber extends Component {
 
     public countBoltScrewedIn(): number
     {
+        if(this.listHole == null)
+        {
+            return 0
+        }
+
         let res = 0
+        log("List Hole Count: " + this.listHole.length)
         for(let i =0; i<this.listHole.length; i++)
         {
             var hole = this.listHole[i]
@@ -55,15 +80,16 @@ export class Timber extends Component {
         return res
     }
 
-    public getLastBoltInBoard(): Bolt
+    public getLastHoleHaveBoltInBoard(): Hole
     {
         for(let i =0; i<this.listHole.length; i++)
         {
             var hole = this.listHole[i]
             if(hole.getBoltScrewedIn() != null)
             {
-                return hole.getBoltScrewedIn()
+                return hole
             }
+            
         }
 
         return null
@@ -76,15 +102,45 @@ export class Timber extends Component {
 
         if(numBoltScrewedIn > 1)
         {
-            this.hingeJoint.enabled = false
-            this.rigidbody.type = ERigidBody2DType.Static
+            //this.hingeJoint.enabled = false
+            this.rigidbody.type = ERigidBody2DType.Kinematic
+            //this.rigidbody.
         }
         else if(numBoltScrewedIn == 1)
         {
-            this.hingeJoint.enabled = true
-            this.hingeJoint.anchor = this.getLastBoltInBoard().node.position.toVec2()
+            // const worldAnchorPosition = this.node..(hingeJoint2D.anchor);
+            // const worldCenterOfMass = this.rigidbody.getWorldCenter(out); 
+            const forceX = 5;
+            //this.rigidbody.applyForceToCenter(new Vec2(forceX, 0), true)
+
             this.rigidbody.type = ERigidBody2DType.Dynamic
+            this.rigidbody.enabled = true
+
+            //this.hingeJoint.connectedAnchor = this.getLastHoleHaveBoltInBoard().node.position.toVec2()
+            this.hingeJoint.anchor = this.getLastHoleHaveBoltInBoard().node.position.toVec2()
+            this.hingeJoint.connectedAnchor = this.getLastHoleHaveBoltInBoard().node.worldPosition.toVec2()
+            this.hingeJoint.enabled = true
+            //this.hingeJoint.connectedAnchor = this.node.position.toVec2()
         }
+        else if(numBoltScrewedIn <= 0)
+        {
+            this.hingeJoint.enabled = false
+            // this.rigidbody.type = ERigidBody2DType.Dynamic
+            // this.rigidbody.enabled = true
+        }
+    }
+
+    public getHoleAtPos(worldPos: Vec3): Hole
+    {
+        for(var i = 0; i<this.listHole.length; i++)
+        {
+            if(Vec2.distance(worldPos.toVec2(), this.listHole[i].node.worldPosition.toVec2()) < this.deltaDistance)
+            {
+                return this.listHole[i]
+            }
+        }
+
+        return null
     }
 }
 

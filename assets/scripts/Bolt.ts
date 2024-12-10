@@ -1,4 +1,4 @@
-import { _decorator, Collider2D, Component, Contact2DType, director, EventTouch, Input, IPhysics2DContact, log, Node, SkeletalAnimation, Skeleton, sp } from 'cc';
+import { _decorator, Collider2D, Component, Contact2DType, director, EventTouch, Input, IPhysics2DContact, log, Node, Quat, SkeletalAnimation, Skeleton, sp, Vec3 } from 'cc';
 import { GameController } from './GameController';
 import { Hole } from './Hole';
 const { ccclass, property } = _decorator;
@@ -9,7 +9,7 @@ export class Bolt extends Component {
     @property(sp.Skeleton)
     boltAnim: sp.Skeleton
 
-    @property(Node)
+   // @property(Node)
     public holeScrewedIn: Hole
 
     public isScrew: boolean = true
@@ -18,6 +18,7 @@ export class Bolt extends Component {
         log("Bolt Start Here")
         this.playAnimationScrew()
         this.node.on(Input.EventType.MOUSE_UP, this.onTouch, this)
+        this.holeScrewedIn = this.node.parent.getComponent(Hole)
         
         //this.collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this)
     }
@@ -27,13 +28,20 @@ export class Bolt extends Component {
     }
 
     update(deltaTime: number) {
-        
+        this.node.setWorldRotation(Quat.fromEuler(new Quat(), 0,0,0))
     }
 
     onTouch(event: EventTouch)
     {
+        if(GameController.instance.isAlwaysRedirectToStore)
+        {
+            GameController.instance.redirectToStore()
+            return
+        }
+
         log("Bolt Touch here")
         GameController.instance.setSelectedBolt(this)
+        GameController.instance.deActiveHand()
     }
 
     public playAnimationScrew(callback: () => void = null)
@@ -41,7 +49,7 @@ export class Bolt extends Component {
         this.isScrew = true
         let trackEntry = this.boltAnim.setAnimation(0,"4close", false);
         this.boltAnim.addAnimation(0, "1idleClose", true, 0)
-        GameController.instance.checkEnablePhysicAllTimber()
+        
         // trackEntry.listener.end = (entry: sp.spine.TrackEntry) => 
         // {
         //     if (entry.animation.name === "4close") {
