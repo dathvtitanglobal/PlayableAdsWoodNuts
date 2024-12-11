@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Game, log, Node, Skeleton, sp, Vec2, Vec3 } from 'cc';
+import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, Input, input, log, Node, Skeleton, sp, Vec2, Vec3 } from 'cc';
 import { Bolt } from './Bolt';
 import { Timber } from './Timber';
 import { Hole } from './Hole';
@@ -9,6 +9,9 @@ export class GameController extends Component {
 
     @property(sp.Skeleton)
     handAnim: sp.Skeleton
+
+    @property(Camera)
+    canvasCamera: Camera
 
     public static instance: GameController
 
@@ -24,7 +27,9 @@ export class GameController extends Component {
 
     public isAlwaysRedirectToStore = false;
 
-    public deltaDistance = 0.01
+    public deltaDistance = 10
+
+    public timeCoolDownShowGuide = 15
 
     start() {
        GameController.instance = this
@@ -36,10 +41,38 @@ export class GameController extends Component {
        this.listBolt = this.getComponentsInChildren(Bolt)
 
        this.activeHand(this.listBolt[0].node.worldPosition)
+
+       input.on(Input.EventType.MOUSE_UP, this.onMouseUp, this);
     }
+    
 
     update(deltaTime: number) {
-        
+        if(this.timeCoolDownShowGuide <= 0)
+        {
+            this.activeHand(this.listBolt[0].node.worldPosition)
+            this.resetTimeCoolDownShowGuide()
+        }
+        else
+        {
+            this.timeCoolDownShowGuide -= deltaTime
+        }
+    }
+
+    onMouseUp(event: EventMouse) {
+        const location = event.getLocation(); // Get mouse position in screen space
+        const worldPosition = this.canvasCamera.screenToWorld(location.toVec3());
+        log("Pos touch: ", worldPosition)
+        var hole = this.getHoleAtPos(worldPosition)
+        if(hole != null)
+        {
+            log("Touch Hole here")
+            hole.onTouch()
+        }
+    }
+
+    public resetTimeCoolDownShowGuide()
+    {
+        this.timeCoolDownShowGuide = 15
     }
 
     public setSelectedBolt(newBoltSelected: Bolt)
@@ -88,7 +121,7 @@ export class GameController extends Component {
         bolt.node.setWorldPosition(hole.node.worldPosition) 
         bolt.playAnimationScrew()
         GameController.instance.setSelectedBolt(null)
-        //this.updateAllHoleScrew()
+        this.updateAllHoleScrew()
         this.checkEnablePhysicAllTimber()
     }
 
@@ -156,6 +189,34 @@ export class GameController extends Component {
                 return this.listBolt[i]
             }
         }
+        return null
+    }
+
+    public getHoleOnBoardAtPos(worldPos: Vec3):Hole
+    {
+        for(var i =0; i<this.listHole.length; i++)
+        {
+            var hole = this.listHole[i]
+            if(!hole.isHoleOnTimber && Vec2.distance(hole.node.worldPosition, worldPos) < this.deltaDistance)
+            {
+                return hole
+            }
+        }
+
+        return null
+    }
+
+    public getHoleAtPos(worldPos: Vec3)
+    {
+        for(var i =0; i<this.listHole.length; i++)
+        {
+            var hole = this.listHole[i]
+            if(Vec2.distance(hole.node.worldPosition, worldPos) < this.deltaDistance)
+            {
+                return hole
+            }
+        }
+
         return null
     }
 

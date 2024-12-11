@@ -33,6 +33,8 @@ export class Bolt extends Component {
 
     onTouch(event: EventTouch)
     {
+        GameController.instance.resetTimeCoolDownShowGuide()
+
         if(GameController.instance.isAlwaysRedirectToStore)
         {
             GameController.instance.redirectToStore()

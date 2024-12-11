@@ -27,7 +27,7 @@ export class Timber extends Component {
         this.getListHole()
         setTimeout(() => {
             this.checkEnablePhysic()
-        }, 1000)
+        }, 2000)
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
@@ -47,7 +47,7 @@ export class Timber extends Component {
     }
 
     update(deltaTime: number) {
-        
+        //this.rigidbody.angularVelocity = 0
     }  
 
     public getListHole(): Hole[]
@@ -103,8 +103,13 @@ export class Timber extends Component {
         if(numBoltScrewedIn > 1)
         {
             //this.hingeJoint.enabled = false
-            this.rigidbody.type = ERigidBody2DType.Kinematic
+            //this.rigidbody.type = ERigidBody2DType.Kinematic
             //this.rigidbody.
+
+            // this.rigidbody.linearVelocity = Vec2.ZERO
+            // this.rigidbody.angularVelocity = 0
+            // this.rigidbody.angularDamping = 0;
+            // this.rigidbody.linearDamping = 0;
         }
         else if(numBoltScrewedIn == 1)
         {
@@ -113,13 +118,19 @@ export class Timber extends Component {
             const forceX = 5;
             //this.rigidbody.applyForceToCenter(new Vec2(forceX, 0), true)
 
-            this.rigidbody.type = ERigidBody2DType.Dynamic
-            this.rigidbody.enabled = true
+            
 
             //this.hingeJoint.connectedAnchor = this.getLastHoleHaveBoltInBoard().node.position.toVec2()
-            this.hingeJoint.anchor = this.getLastHoleHaveBoltInBoard().node.position.toVec2()
+            var localPoint = new Vec3()
+            this.hingeJoint.anchor = this.node.inverseTransformPoint(localPoint, this.getLastHoleHaveBoltInBoard().node.worldPosition).toVec2()
             this.hingeJoint.connectedAnchor = this.getLastHoleHaveBoltInBoard().node.worldPosition.toVec2()
             this.hingeJoint.enabled = true
+
+            this.rigidbody.type = ERigidBody2DType.Dynamic
+            this.rigidbody.enabled = true
+            // this.rigidbody.angularDamping = 0.05;
+            // this.rigidbody.linearDamping = 0.05;
+
             //this.hingeJoint.connectedAnchor = this.node.position.toVec2()
         }
         else if(numBoltScrewedIn <= 0)
