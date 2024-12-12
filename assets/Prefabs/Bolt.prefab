@@ -182,10 +182,10 @@
     "_restitution": 1,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
+      "x": 0.8,
+      "y": 2.2
     },
-    "_radius": 40.3,
+    "_radius": 20,
     "_id": ""
   },
   {
@@ -235,6 +235,7 @@
       "__id__": 0
     },
     "fileId": "43VGEcFndBnrn8eudEqFbA",
-    "instance": null
+    "instance": null,
+    "targetOverrides": null
   }
 ]
