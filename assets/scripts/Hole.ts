@@ -38,19 +38,21 @@ export class Hole extends Component {
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
-        log('Hole Collision started with:', otherCollider.node.name)
+        
         //this.overlapGameObjects.(otherCollider)
         const index = this.overlapGameObjects.indexOf(otherCollider, 0);
         if (index < 0) {
+            log('Hole Collision started with:', otherCollider.node.name)
             this.overlapGameObjects.push(otherCollider);
         }
     }
 
     onEndContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
-        log('Hole Collision end with:', otherCollider.node.name)
+        
         //this.overlapGameObjects.(otherCollider)
         const index = this.overlapGameObjects.indexOf(otherCollider, 0);
         if (index >= 0) {
+            log('Hole Collision end with:', otherCollider.node.name)
             this.overlapGameObjects.splice(index, 1);
         }
     }
@@ -120,6 +122,10 @@ export class Hole extends Component {
         {
             log("Hole on board no obstacle")
             return true
+        }
+        else if(GameController.instance.getBoltAtPos(this.node.worldPosition) != null)
+        {
+            return false
         }
         else
         {

@@ -24,7 +24,7 @@ export class Bolt extends Component {
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
-        console.log('Collision started with:', otherCollider.node.name);
+        //console.log('Collision started with:', otherCollider.node.name);
     }
 
     update(deltaTime: number) {
@@ -42,6 +42,7 @@ export class Bolt extends Component {
         }
 
         log("Bolt Touch here")
+        GameController.instance.showIQ()
         GameController.instance.setSelectedBolt(this)
         GameController.instance.deActiveHand()
     }

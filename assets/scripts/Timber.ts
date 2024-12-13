@@ -1,4 +1,4 @@
-import { _decorator, Camera, Collider2D, Component, Contact2DType, ERigidBody2DType, HingeJoint2D, IPhysics2DContact, log, Node, RigidBody2D, Vec2, Vec3 } from 'cc';
+import { _decorator, BoxCollider2D, Camera, Collider2D, Component, Contact2DType, ERigidBody2DType, HingeJoint2D, IPhysics2DContact, log, Node, RigidBody2D, Size, UITransform, Vec2, Vec3 } from 'cc';
 import { Hole } from './Hole';
 import { Bolt } from './Bolt';
 import { GameController } from './GameController';
@@ -16,6 +16,9 @@ export class Timber extends Component {
     @property(HingeJoint2D)
     hingeJoint: HingeJoint2D
 
+    @property(UITransform)
+    timber: UITransform
+
     listHole: Hole[] 
 
     public isActive = true
@@ -25,13 +28,17 @@ export class Timber extends Component {
     start() {
         this.collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this)
         this.getListHole()
+      
+        var newBoxCollider = this.addComponent(BoxCollider2D)
+        newBoxCollider.size = new Size(this.timber.contentSize.x, this.timber.contentSize.y)
+        newBoxCollider.group = 139212
         setTimeout(() => {
             this.checkEnablePhysic()
         }, 2000)
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
-        log('Collision started with:', otherCollider.node.name)
+        //log('Collision started with:', otherCollider.node.name)
         if(otherCollider.node.name == "BottomTrigger" && this.isActive)
         {
             this.isActive = false
@@ -42,6 +49,7 @@ export class Timber extends Component {
             setTimeout(() => {
                 this.node.active = false
             }, 2000)
+            GameController.instance.updateIQ(5)
             GameController.instance.checkAndPerformNextAction()
         }
     }

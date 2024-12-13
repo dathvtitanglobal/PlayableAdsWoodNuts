@@ -918,6 +918,9 @@
     "hingeJoint": {
       "__id__": 48
     },
+    "timber": {
+      "__id__": 5
+    },
     "_id": ""
   },
   {
@@ -975,7 +978,7 @@
     "_density": 1,
     "_sensor": false,
     "_friction": 0.2,
-    "_restitution": 0.5,
+    "_restitution": 0.25,
     "_offset": {
       "__type__": "cc.Vec2",
       "x": -88.1,
@@ -1045,7 +1048,7 @@
     "_density": 1,
     "_sensor": false,
     "_friction": 0.2,
-    "_restitution": 0.5,
+    "_restitution": 0.25,
     "_offset": {
       "__type__": "cc.Vec2",
       "x": -88.1,
@@ -1079,7 +1082,7 @@
     "_density": 1,
     "_sensor": false,
     "_friction": 0.2,
-    "_restitution": 0.5,
+    "_restitution": 0.25,
     "_offset": {
       "__type__": "cc.Vec2",
       "x": -275,
@@ -1113,7 +1116,7 @@
     "_density": 1,
     "_sensor": false,
     "_friction": 0.2,
-    "_restitution": 0.5,
+    "_restitution": 0.25,
     "_offset": {
       "__type__": "cc.Vec2",
       "x": 93.7,
@@ -1139,6 +1142,7 @@
       "__id__": 0
     },
     "fileId": "76w60jQNNOnLVEXjeeZqFO",
-    "instance": null
+    "instance": null,
+    "targetOverrides": null
   }
 ]

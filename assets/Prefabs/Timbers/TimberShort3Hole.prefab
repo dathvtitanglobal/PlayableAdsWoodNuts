@@ -1242,6 +1242,9 @@
     "hingeJoint": {
       "__id__": 64
     },
+    "timber": {
+      "__id__": 6
+    },
     "_id": ""
   },
   {
@@ -1299,7 +1302,7 @@
     "_density": 1,
     "_sensor": false,
     "_friction": 0.2,
-    "_restitution": 0.5,
+    "_restitution": 0.25,
     "_offset": {
       "__type__": "cc.Vec2",
       "x": 18.2,
@@ -1369,7 +1372,7 @@
     "_density": 1,
     "_sensor": false,
     "_friction": 0.2,
-    "_restitution": 0.5,
+    "_restitution": 0.25,
     "_offset": {
       "__type__": "cc.Vec2",
       "x": 17.2,
@@ -1403,7 +1406,7 @@
     "_density": 1,
     "_sensor": false,
     "_friction": 0.2,
-    "_restitution": 0.5,
+    "_restitution": 0.25,
     "_offset": {
       "__type__": "cc.Vec2",
       "x": -77,
@@ -1437,7 +1440,7 @@
     "_density": 1,
     "_sensor": false,
     "_friction": 0.2,
-    "_restitution": 0.5,
+    "_restitution": 0.25,
     "_offset": {
       "__type__": "cc.Vec2",
       "x": 113.9,

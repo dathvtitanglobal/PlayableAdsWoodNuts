@@ -1,4 +1,4 @@
-import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, Input, input, log, Node, Skeleton, sp, Vec2, Vec3 } from 'cc';
+import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, Input, input, Label, log, Node, Quat, Skeleton, sp, tween, Vec2, Vec3 } from 'cc';
 import { Bolt } from './Bolt';
 import { Timber } from './Timber';
 import { Hole } from './Hole';
@@ -12,6 +12,18 @@ export class GameController extends Component {
 
     @property(Camera)
     canvasCamera: Camera
+
+    @property(Label)
+    textIQ: Label
+
+    @property(Node)
+    owl: Node
+
+    @property(Node)
+    iqNode: Node
+
+    @property(Node)
+    textTestYourIQ: Node
 
     public static instance: GameController
 
@@ -31,6 +43,10 @@ export class GameController extends Component {
 
     public timeCoolDownShowGuide = 15
 
+    private iqNum = 0
+
+    private isIQShowed = false
+
     start() {
        GameController.instance = this
 
@@ -43,6 +59,13 @@ export class GameController extends Component {
        this.activeHand(this.listBolt[0].node.worldPosition)
 
        input.on(Input.EventType.MOUSE_UP, this.onMouseUp, this);
+
+       this.textIQ.string = this.iqNum + ""
+
+       setTimeout(() => {
+            this.checkLose()
+       }, 10000)
+       
     }
     
 
@@ -56,6 +79,55 @@ export class GameController extends Component {
         {
             this.timeCoolDownShowGuide -= deltaTime
         }
+    }
+
+    public updateIQ(delta: number)
+    {
+        log("Update IQ Here")
+        tween({value: this.iqNum}).to(0.5, {value: this.iqNum + delta}, {
+            onUpdate: target => {
+                this.iqNum = target.value
+                this.textIQ.string = parseInt(this.iqNum + "") + ""
+            }
+        })
+        .start()
+    }
+
+    public showIQ()
+    {
+        if(this.isIQShowed)
+        {
+            return
+        }
+
+        this.isIQShowed = true
+        this.textTestYourIQ.active = false
+        this.iqNode.active = true
+        this.updateIQ(70)
+        this.rotateOwl()
+    }
+
+    private rotateOwl()
+    {
+        let leftAngle = new Quat()
+        Quat.fromEuler(leftAngle,0, 0, 4)
+        let rightAngle = new Quat()
+        Quat.fromEuler(rightAngle, 0, 0, -6)
+        
+        var rotateLeft = tween(this.owl).to(0.5, {
+            rotation: leftAngle
+        })
+        .to(0.5, {
+            rotation: rightAngle
+        })
+        .to(0.5, {
+            rotation: Quat.IDENTITY
+        })
+        .start()
+
+        setTimeout(() => {
+            this.rotateOwl()
+        }, 5000)
     }
 
     onMouseUp(event: EventMouse) {
@@ -117,12 +189,13 @@ export class GameController extends Component {
     {
         log("Screw To Hole")
         hole.boltScrewedIn = bolt
-        bolt.node.setParent(hole.node)
+        //bolt.node.setParent(hole.node)
         bolt.node.setWorldPosition(hole.node.worldPosition) 
         bolt.playAnimationScrew()
         GameController.instance.setSelectedBolt(null)
         this.updateAllHoleScrew()
         this.checkEnablePhysicAllTimber()
+
     }
 
     public unscrewFromHole(hole: Hole, bolt: Bolt)
@@ -137,6 +210,33 @@ export class GameController extends Component {
         {
             bolt.holeScrewedIn = null
         }
+    }
+
+    public checkLose()
+    {
+        log("Check lose here")
+        var lose = true
+        for(var i = 0; i<this.listHole.length; i++)
+        {
+            var hole = this.listHole[i]
+            if(hole.canScrew())
+            {
+                log("Hole can screw: ", hole.node.name)
+                lose = false 
+            }
+        }
+
+        if(lose)
+        {
+            director.loadScene("LoseScene")
+        }
+        else
+        {
+            setTimeout(() => {
+                this.checkLose()
+            }, 10000)
+        }
+        
     }
 
     public updateAllHoleScrew()
@@ -183,7 +283,7 @@ export class GameController extends Component {
         for(var i = 0; i<this.listBolt.length; i++)
         {
             var distance = Vec2.distance(this.listBolt[i].node.worldPosition, worldPos)
-            log("Distance to bolt: ", distance)
+            //log("Distance to bolt: ", distance)
             if(distance < this.deltaDistance)
             {
                 return this.listBolt[i]
