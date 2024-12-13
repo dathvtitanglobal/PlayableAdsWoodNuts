@@ -30,8 +30,8 @@ export class Timber extends Component {
         this.getListHole()
       
         var newBoxCollider = this.addComponent(BoxCollider2D)
-        newBoxCollider.size = new Size(this.timber.contentSize.x, this.timber.contentSize.y)
-        newBoxCollider.group = 139212
+        newBoxCollider.size = new Size(this.timber.contentSize.x * 0.45, this.timber.contentSize.y * 0.4)
+        newBoxCollider.group = 1<<17
         setTimeout(() => {
             this.checkEnablePhysic()
         }, 2000)
