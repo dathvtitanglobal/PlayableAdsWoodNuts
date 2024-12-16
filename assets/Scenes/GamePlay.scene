@@ -307,7 +307,7 @@
     "_priority": 1073741824,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 465.5297157622739,
+    "_orthoHeight": 465.979381443299,
     "_near": 1,
     "_far": 2000,
     "_color": {
@@ -24592,6 +24592,10 @@
     "textTestYourIQ": {
       "__id__": 1927
     },
+    "tapBoltFx": {
+      "__uuid__": "0662c408-827d-46fd-8fc0-132223f1fdb3",
+      "__expectedType__": "cc.Prefab"
+    },
     "_id": "fckBFMYlNL34GYs94id2VB"
   },
   {
@@ -24609,6 +24613,10 @@
     },
     "backgroundMusic": {
       "__id__": 1936
+    },
+    "timberCollide": {
+      "__uuid__": "9574097c-bbda-4637-b6a3-b2df61bab5ff",
+      "__expectedType__": "cc.AudioClip"
     },
     "_id": "ca2WoavrpHKrWwzbiP1pgo"
   },

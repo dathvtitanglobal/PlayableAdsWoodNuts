@@ -12,6 +12,9 @@ export class AudioManager extends Component {
     @property(AudioSource)
     backgroundMusic: AudioSource
 
+    @property(AudioClip)
+    timberCollide: AudioClip
+
     start() {
         AudioManager.instance = this
     }
@@ -26,6 +29,12 @@ export class AudioManager extends Component {
     {
         this.backgroundMusic.play()
     }
+
+    public playSoundTimberCollide()
+    {
+        this.playSoundFx(this.timberCollide)
+    }
+
 }
 
 

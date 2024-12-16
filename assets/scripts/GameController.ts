@@ -1,4 +1,4 @@
-import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, Input, input, Label, log, Node, Quat, Skeleton, sp, tween, Vec2, Vec3 } from 'cc';
+import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, Input, input, instantiate, Label, log, Node, ParticleSystem2D, Prefab, Quat, Skeleton, sp, tween, Vec2, Vec3 } from 'cc';
 import { Bolt } from './Bolt';
 import { Timber } from './Timber';
 import { Hole } from './Hole';
@@ -24,6 +24,10 @@ export class GameController extends Component {
 
     @property(Node)
     textTestYourIQ: Node
+
+    @property(Prefab)
+    tapBoltFx: Prefab
+
 
     public static instance: GameController
 
@@ -185,9 +189,18 @@ export class GameController extends Component {
         return this.currentBoltSelected
     }
 
+    public playTapScrewFx(worldPos: Vec3)
+    {
+        log("Fx Bolt here")
+        var fx = instantiate(this.tapBoltFx)
+        fx.parent = this.node
+        fx.worldPosition = worldPos
+    }
+
     public screwToHole(hole: Hole, bolt: Bolt)
     {
         log("Screw To Hole")
+        this.playTapScrewFx(hole.node.position)
         hole.boltScrewedIn = bolt
         //bolt.node.setParent(hole.node)
         bolt.node.setWorldPosition(hole.node.worldPosition) 

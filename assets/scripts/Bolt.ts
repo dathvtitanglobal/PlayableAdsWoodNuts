@@ -45,6 +45,8 @@ export class Bolt extends Component {
             return
         }
 
+        GameController.instance.playTapScrewFx(this.node.worldPosition)
+
         log("Bolt Touch here")
         GameController.instance.showIQ()
         GameController.instance.setSelectedBolt(this)

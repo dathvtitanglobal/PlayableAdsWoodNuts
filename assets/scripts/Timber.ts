@@ -1,7 +1,8 @@
-import { _decorator, BoxCollider2D, Camera, Collider2D, Component, Contact2DType, ERigidBody2DType, HingeJoint2D, IPhysics2DContact, log, Node, RigidBody2D, Size, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, AudioClip, BoxCollider2D, Camera, Collider2D, Component, Contact2DType, ERigidBody2DType, HingeJoint2D, IPhysics2DContact, log, Node, RigidBody2D, Size, UITransform, Vec2, Vec3 } from 'cc';
 import { Hole } from './Hole';
 import { Bolt } from './Bolt';
 import { GameController } from './GameController';
+import { AudioManager } from './AudioManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('Timber')
@@ -59,6 +60,11 @@ export class Timber extends Component {
             }, 2000)
             GameController.instance.updateIQ(5)
             GameController.instance.checkAndPerformNextAction()
+        }
+
+        if(otherCollider.getComponent(Timber) != null || otherCollider.getComponent(Bolt) != null)
+        {
+            AudioManager.instance.playSoundTimberCollide()
         }
     }
 
