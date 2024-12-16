@@ -311,7 +311,7 @@ export class GameController extends Component {
         for(var i =0; i<this.listHole.length; i++)
         {
             var hole = this.listHole[i]
-            if(Vec2.distance(hole.node.worldPosition, worldPos) < this.deltaDistance)
+            if(Vec2.distance(hole.node.worldPosition, worldPos) < this.deltaDistance * 2)
             {
                 return hole
             }

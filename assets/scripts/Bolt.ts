@@ -1,6 +1,7 @@
-import { _decorator, Collider2D, Component, Contact2DType, director, EventTouch, Input, IPhysics2DContact, log, Node, Quat, SkeletalAnimation, Skeleton, sp, Vec3 } from 'cc';
+import { _decorator, AudioClip, Collider2D, Component, Contact2DType, director, EventTouch, Input, IPhysics2DContact, log, Node, Quat, SkeletalAnimation, Skeleton, sp, Vec3 } from 'cc';
 import { GameController } from './GameController';
 import { Hole } from './Hole';
+import { AudioManager } from './AudioManager';
 const { ccclass, property } = _decorator;
 
 @ccclass("Bolt")
@@ -8,6 +9,9 @@ export class Bolt extends Component {
 
     @property(sp.Skeleton)
     boltAnim: sp.Skeleton
+
+    @property(AudioClip)
+    clipScrew: AudioClip
 
    // @property(Node)
     public holeScrewedIn: Hole
@@ -52,7 +56,7 @@ export class Bolt extends Component {
         this.isScrew = true
         let trackEntry = this.boltAnim.setAnimation(0,"4close", false);
         this.boltAnim.addAnimation(0, "1idleClose", true, 0)
-        
+        AudioManager.instance.playSoundFx(this.clipScrew)
         // trackEntry.listener.end = (entry: sp.spine.TrackEntry) => 
         // {
         //     if (entry.animation.name === "4close") {
@@ -66,6 +70,7 @@ export class Bolt extends Component {
         this.isScrew = false
         let trackEntry = this.boltAnim.setAnimation(0, "2open", false)
         this.boltAnim.addAnimation(0, "3idleOpen", true, 0)
+        AudioManager.instance.playSoundFx(this.clipScrew)
         // trackEntry.listener.end = (entry: sp.spine.TrackEntry) => {
         //     if(entry.animation.name == "2open")
         //     {

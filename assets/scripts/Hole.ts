@@ -20,7 +20,36 @@ export class Hole extends Component {
 
     start() {
 
-        this.isHoleOnTimber = this.node.parent.getComponent(Timber) != null
+        this.isHoleOnTimber = false
+        var holeParent = this.node.parent
+        var holeHole = holeParent.getComponent(Hole)
+        var holeTimber = holeParent.getComponent(Timber)
+        while(holeParent != null && (holeHole != null || holeTimber != null))
+        {
+            if(holeHole != null)
+            {
+                this.isHoleOnTimber = true
+                holeHole.isHoleOnTimber = true
+                holeParent = holeParent.parent
+            }
+            else if(holeTimber != null)
+            {
+                this.isHoleOnTimber = true
+                holeParent = null
+            }
+
+            if(holeParent != null)
+            {
+                holeHole = holeParent.getComponent(Hole)
+                holeTimber = holeParent.getComponent(Timber)
+            }
+            else
+            {
+                holeHole = null
+                holeTimber = null
+            }
+
+        }
 
         //this.node.on(Input.EventType.MOUSE_UP, this.onTouch, this)
         //this.boltScrewedIn = this.getComponentInChildren(Bolt)
@@ -118,14 +147,14 @@ export class Hole extends Component {
             }
         }
 
-        if(this.overlapGameObjects == null || this.overlapGameObjects.length <= 0)
+        if(GameController.instance.getBoltAtPos(this.node.worldPosition) != null)
+        {
+            return false
+        }
+        else if(this.overlapGameObjects == null || this.overlapGameObjects.length <= 0)
         {
             log("Hole on board no obstacle")
             return true
-        }
-        else if(GameController.instance.getBoltAtPos(this.node.worldPosition) != null)
-        {
-            return false
         }
         else
         {

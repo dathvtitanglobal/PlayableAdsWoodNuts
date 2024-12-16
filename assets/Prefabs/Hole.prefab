@@ -185,7 +185,7 @@
       "x": 0,
       "y": 0
     },
-    "_radius": 18.5,
+    "_radius": 14.5,
     "_id": ""
   },
   {
@@ -235,6 +235,7 @@
       "__id__": 0
     },
     "fileId": "43g4qXU8RFXbNkb/mxx50j",
+    "instance": null,
     "targetOverrides": null
   }
 ]

@@ -30,11 +30,19 @@ export class Timber extends Component {
         this.getListHole()
       
         var newBoxCollider = this.addComponent(BoxCollider2D)
-        newBoxCollider.size = new Size(this.timber.contentSize.x * 0.45, this.timber.contentSize.y * 0.4)
+        newBoxCollider.size = new Size(this.timber.contentSize.x * 0.6, this.timber.contentSize.y * 0.6)
+
+        var offset = new Vec3()
+        this.node.inverseTransformPoint(offset, this.timber.node.worldPosition)
+        newBoxCollider.offset = offset.toVec2()
         newBoxCollider.group = 1<<17
+        newBoxCollider.restitution = 0.25
+
+
         setTimeout(() => {
             this.checkEnablePhysic()
         }, 2000)
+        
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
