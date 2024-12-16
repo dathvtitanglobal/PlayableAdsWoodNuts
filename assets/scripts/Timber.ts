@@ -24,7 +24,7 @@ export class Timber extends Component {
 
     public isActive = true
 
-    public deltaDistance = 0.01
+    public deltaDistance = 10
 
     start() {
         this.collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this)
@@ -76,7 +76,7 @@ export class Timber extends Component {
     {
         if(this.listHole == null || this.listHole.length <= 0)
         {
-            this.listHole = this.getComponentsInChildren(Hole)
+            this.listHole = this.getAllComponentsInChildren(this.node, Hole)
         }
 
         return this.listHole
@@ -165,15 +165,47 @@ export class Timber extends Component {
 
     public getHoleAtPos(worldPos: Vec3): Hole
     {
+        log("Timber get hole at pos, list hole:", this.listHole.length)
         for(var i = 0; i<this.listHole.length; i++)
         {
             if(Vec2.distance(worldPos.toVec2(), this.listHole[i].node.worldPosition.toVec2()) < this.deltaDistance)
             {
+                log("Have hole here")
                 return this.listHole[i]
             }
         }
 
         return null
+    }
+
+    getAllComponentsInChildren<T extends Component>(
+        parent: Node,
+        componentType?: { new (): T } // Optional filter by component type
+    ): T[] {
+        const components: T[] = [];
+    
+        // Helper function for recursion
+        function traverse(node: Node): void {
+            if (!node) return;
+    
+            // If a component type is specified, get only that type
+            if (componentType) {
+                const foundComponents = node.getComponents(componentType);
+                components.push(...foundComponents);
+            } else {
+                // If no type is specified, get all components
+                const foundComponents = node.getComponents(Component) as T[];
+                components.push(...foundComponents);
+            }
+    
+            // Recurse into children
+            node.children.forEach((child) => traverse(child));
+        }
+    
+        // Start recursion from the parent node
+        traverse(parent);
+    
+        return components;
     }
 }
 
