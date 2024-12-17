@@ -69,6 +69,7 @@ export class Hole extends Component {
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         
         //this.overlapGameObjects.(otherCollider)
+        log('Collision started with:', otherCollider.node.name)
         const index = this.overlapGameObjects.indexOf(otherCollider, 0);
         if (index < 0) {
             log('Hole Collision started with:', otherCollider.node.name)
@@ -79,6 +80,7 @@ export class Hole extends Component {
     onEndContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         
         //this.overlapGameObjects.(otherCollider)
+        log('Collision end with:', otherCollider.node.name)
         const index = this.overlapGameObjects.indexOf(otherCollider, 0);
         if (index >= 0) {
             log('Hole Collision end with:', otherCollider.node.name)
@@ -132,6 +134,8 @@ export class Hole extends Component {
 
     public canScrew(): boolean 
     {
+
+
         if(this.isHoleOnTimber)
         {
             var holeOnBoard = GameController.instance.getHoleOnBoardAtPos(this.node.worldPosition)

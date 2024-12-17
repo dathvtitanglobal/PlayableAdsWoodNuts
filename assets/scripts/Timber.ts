@@ -47,7 +47,7 @@ export class Timber extends Component {
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
-        //log('Collision started with:', otherCollider.node.name)
+        log('Collision started with:', otherCollider.node.name)
         if(otherCollider.node.name == "BottomTrigger" && this.isActive)
         {
             this.isActive = false
@@ -76,7 +76,8 @@ export class Timber extends Component {
     {
         if(this.listHole == null || this.listHole.length <= 0)
         {
-            this.listHole = this.getAllComponentsInChildren(this.node, Hole)
+            //this.listHole = this.getAllComponentsInChildren(this.node, Hole)
+            this.listHole = this.getComponentsInChildren(Hole)
         }
 
         return this.listHole

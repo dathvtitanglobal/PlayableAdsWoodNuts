@@ -96,10 +96,10 @@ export class GameController extends Component {
 
        this.handleOrientation()
 
-       window.addEventListener("orientationchange", function() {
-            log("Orientation change here")
-            this.handleOrientation()
-        }.bind(this) )
+    //    window.addEventListener("orientationchange", function() {
+    //         log("Orientation change here")
+    //         this.handleOrientation()
+    //     }.bind(this) )
        
     }
     
