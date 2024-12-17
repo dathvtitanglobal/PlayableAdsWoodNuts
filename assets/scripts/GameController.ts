@@ -8,8 +8,8 @@ const { ccclass, property } = _decorator;
 @ccclass('GameController')
 export class GameController extends Component {
 
-    @property(sp.Skeleton)
-    handAnim: sp.Skeleton
+    @property(Node)
+    handAnim: Node
 
     @property(Camera)
     canvasCamera: Camera
@@ -179,11 +179,15 @@ export class GameController extends Component {
     public updateIQ(delta: number)
     {
         log("Update IQ Here")
-        tween({value: this.iqNum}).to(0.5, {value: this.iqNum + delta}, {
+        var tempIQ = this.iqNum
+        this.textIQ.string = parseInt(tempIQ + "") + ""
+        this.textIQPortrait.string = parseInt(tempIQ + "") + ""
+        this.iqNum += delta
+        tween({value: tempIQ}).to(0.5, {value: this.iqNum}, {
             onUpdate: target => {
-                this.iqNum = target.value
-                this.textIQ.string = parseInt(this.iqNum + "") + ""
-                this.textIQPortrait.string = parseInt(this.iqNum + "") + ""
+                tempIQ = target.value
+                this.textIQ.string = parseInt(tempIQ + "") + ""
+                this.textIQPortrait.string = parseInt(tempIQ + "") + ""
             }
         })
         .start()
@@ -236,7 +240,7 @@ export class GameController extends Component {
 
         setTimeout(() => {
             this.rotateOwl()
-        }, 5000)
+        }, 3000)
     }
 
     onTouchStart(event: EventTouch)
@@ -380,14 +384,28 @@ export class GameController extends Component {
 
     public activeHand(pos: Vec3)
     {
-        this.handAnim.node.active = true
-        this.handAnim.node.worldPosition = pos
-        this.handAnim.setAnimation(0, "animation", true)
+        this.handAnim.active = true
+        
+        this.handAnim.worldPosition = pos
+        var track = this.handAnim.getChildByName("Hand").getComponent(sp.Skeleton).setAnimation(0, "animation", true) 
+        this.loopBoltFx(pos, track.animation.duration)
+    }
+
+    private loopBoltFx(pos: Vec3, duration: number)
+    {
+        log("Loop here")
+        this.playTapScrewFx(pos)
+        if(this.handAnim.active)
+        {
+            setTimeout(() => {
+                this.loopBoltFx(pos, duration)
+            }, duration * 1000)
+        }
     }
 
     public deActiveHand()
     {
-        this.handAnim.node.active = false
+        this.handAnim.active = false
     }
 
     public checkAndPerformNextAction()
@@ -395,7 +413,7 @@ export class GameController extends Component {
         let countActiveTimber = 0
         for(var i =0; i<this.listTimber.length; i++)
         {
-            if(this.listTimber[i].isActive)
+            if(this.listTimber[i].countBoltScrewedIn() >= 1)
             {
                 countActiveTimber ++;
             }

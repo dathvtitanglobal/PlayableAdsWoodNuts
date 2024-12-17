@@ -98,6 +98,7 @@ export class Hole extends Component {
     {
         log("Hole Touch here")
 
+        GameController.instance.playTapScrewFx(this.node.worldPosition)
         GameController.instance.resetTimeCoolDownShowGuide()
 
         if(!this.canScrew())

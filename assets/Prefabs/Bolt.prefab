@@ -122,7 +122,7 @@
       "__uuid__": "e31892b6-efdb-4cd8-bf5f-341349a2934e",
       "__expectedType__": "sp.SkeletonData"
     },
-    "defaultSkin": "skin11",
+    "defaultSkin": "skin1",
     "defaultAnimation": "1idleClose",
     "_premultipliedAlpha": true,
     "_timeScale": 1,
@@ -239,7 +239,6 @@
       "__id__": 0
     },
     "fileId": "43VGEcFndBnrn8eudEqFbA",
-    "instance": null,
-    "targetOverrides": null
+    "instance": null
   }
 ]
