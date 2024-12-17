@@ -21,7 +21,10 @@ export class Bolt extends Component {
     start() {
         log("Bolt Start Here")
         this.playAnimationScrew()
-        this.node.on(Input.EventType.MOUSE_UP, this.onTouch, this)
+        //this.node.on(Input.EventType.MOUSE_UP, this.onTouch, this)
+
+        this.node.on(Input.EventType.TOUCH_START, this.onTouch, this)
+
         this.holeScrewedIn = this.node.parent.getComponent(Hole)
         
         //this.collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this)

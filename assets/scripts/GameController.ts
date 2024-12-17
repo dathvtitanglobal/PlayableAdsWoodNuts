@@ -64,11 +64,15 @@ export class GameController extends Component {
 
        input.on(Input.EventType.MOUSE_UP, this.onMouseUp, this);
 
+       input.on(Input.EventType.TOUCH_START, this.onTouchStart, this)
+
        this.textIQ.string = this.iqNum + ""
 
        setTimeout(() => {
             this.checkLose()
        }, 10000)
+
+       window.addEventListener
        
     }
     
@@ -83,6 +87,10 @@ export class GameController extends Component {
         {
             this.timeCoolDownShowGuide -= deltaTime
         }
+
+        // log("Window width: ", window.screen.width)
+        log("Window orient: ", window.screen.orientation.type)
+        log("Window angle:" +window.screen.orientation.angle)
     }
 
     public updateIQ(delta: number)
@@ -132,6 +140,19 @@ export class GameController extends Component {
         setTimeout(() => {
             this.rotateOwl()
         }, 5000)
+    }
+
+    onTouchStart(event: EventTouch)
+    {
+        const location = event.getLocation(); // Get mouse position in screen space
+        const worldPosition = this.canvasCamera.screenToWorld(location.toVec3());
+        log("Pos touch: ", worldPosition)
+        var hole = this.getHoleAtPos(worldPosition)
+        if(hole != null)
+        {
+            log("Touch Hole here")
+            hole.onTouch()
+        }
     }
 
     onMouseUp(event: EventMouse) {
