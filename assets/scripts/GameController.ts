@@ -1,4 +1,4 @@
-import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, Input, input, instantiate, Label, log, Node, ParticleSystem2D, Prefab, Quat, Skeleton, sp, tween, Vec2, Vec3 } from 'cc';
+import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, Input, input, instantiate, Label, log, Node, ParticleSystem2D, Prefab, Quat, Skeleton, sp, tween, Vec2, Vec3, Widget } from 'cc';
 import { Bolt } from './Bolt';
 import { Timber } from './Timber';
 import { Hole } from './Hole';
@@ -16,17 +16,38 @@ export class GameController extends Component {
     @property(Label)
     textIQ: Label
 
+    @property(Label)
+    textIQPortrait: Label
+
     @property(Node)
     owl: Node
+
+    @property(Node)
+    owlPortrait: Node
 
     @property(Node)
     iqNode: Node
 
     @property(Node)
+    iqNodePortrait: Node
+
+    @property(Node)
     textTestYourIQ: Node
+
+    @property(Node)
+    textTestYourIQPortrait: Node
 
     @property(Prefab)
     tapBoltFx: Prefab
+
+    @property(Node)
+    portraitUI: Node
+
+    @property(Node)
+    landscapeUI: Node
+
+    @property(Node)
+    gameBoard: Node
 
 
     public static instance: GameController
@@ -67,16 +88,23 @@ export class GameController extends Component {
        input.on(Input.EventType.TOUCH_START, this.onTouchStart, this)
 
        this.textIQ.string = this.iqNum + ""
+       this.textIQPortrait.string = this.iqNum + ""
 
        setTimeout(() => {
             this.checkLose()
        }, 10000)
 
-       window.addEventListener
+       this.handleOrientation()
+
+       window.addEventListener("orientationchange", function() {
+            log("Orientation change here")
+            this.handleOrientation()
+        }.bind(this) )
        
     }
     
 
+    
     update(deltaTime: number) {
         if(this.timeCoolDownShowGuide <= 0)
         {
@@ -89,9 +117,60 @@ export class GameController extends Component {
         }
 
         // log("Window width: ", window.screen.width)
-        log("Window orient: ", window.screen.orientation.type)
-        log("Window angle:" +window.screen.orientation.angle)
+        // log("Window orient: ", window.screen.orientation.type)
+        // log("Window angle:" +window.screen.orientation.angle)
     }
+
+    handleOrientation()
+    {
+        if(screen.orientation.type == "landscape-primary")
+        {
+            this.portraitUI.active = false
+            this.landscapeUI.active = true
+            this.gameBoard.getComponent(Widget).horizontalCenter = -261
+            this.gameBoard.getComponent(Widget).verticalCenter = 0
+            this.gameBoard.setScale(Vec3.ONE)
+            // if((screen.orientation.angle / 90) % 2 == 0){
+            //     this.portraitUI.active = false
+            //     this.landscapeUI.active = true
+            //     this.gameBoard.getComponent(Widget).horizontalCenter = -261
+            //     this.gameBoard.getComponent(Widget).verticalCenter = 0
+            //     this.gameBoard.setScale(Vec3.ONE)
+            // }
+            // else
+            // {
+            //     this.portraitUI.active = true
+            //     this.landscapeUI.active = false
+            //     this.gameBoard.getComponent(Widget).horizontalCenter = 0
+            //     this.gameBoard.getComponent(Widget).verticalCenter = -83
+            //     this.gameBoard.setScale(new Vec3(1.7, 1.7, 1.7))
+            // }
+        }
+        else if(screen.orientation.type == "portrait-primary")
+        {
+            this.portraitUI.active = true
+            this.landscapeUI.active = false
+            this.gameBoard.getComponent(Widget).horizontalCenter = 0
+            this.gameBoard.getComponent(Widget).verticalCenter = -100
+            //this.gameBoard.setScale(new Vec3(0.8, 0.8))
+            // if((screen.orientation.angle / 90) % 2 == 0){
+            //     this.portraitUI.active = true
+            //     this.landscapeUI.active = false
+            //     this.gameBoard.getComponent(Widget).horizontalCenter = 0
+            //     this.gameBoard.getComponent(Widget).verticalCenter = -83
+            //     this.gameBoard.setScale(new Vec3(1.7, 1.7, 1.7))
+            // }
+            // else
+            // {
+            //     this.portraitUI.active = false
+            //     this.landscapeUI.active = true
+            //     this.gameBoard.getComponent(Widget).horizontalCenter = -261
+            //     this.gameBoard.getComponent(Widget).verticalCenter = 0
+            //     this.gameBoard.setScale(Vec3.ONE)
+            // }
+        }
+    }
+
 
     public updateIQ(delta: number)
     {
@@ -100,6 +179,7 @@ export class GameController extends Component {
             onUpdate: target => {
                 this.iqNum = target.value
                 this.textIQ.string = parseInt(this.iqNum + "") + ""
+                this.textIQPortrait.string = parseInt(this.iqNum + "") + ""
             }
         })
         .start()
@@ -114,7 +194,9 @@ export class GameController extends Component {
 
         this.isIQShowed = true
         this.textTestYourIQ.active = false
+        this.textTestYourIQPortrait.active = false
         this.iqNode.active = true
+        this.iqNodePortrait.active = true
         this.updateIQ(70)
         this.rotateOwl()
     }
@@ -126,7 +208,18 @@ export class GameController extends Component {
         let rightAngle = new Quat()
         Quat.fromEuler(rightAngle, 0, 0, -6)
         
-        var rotateLeft = tween(this.owl).to(0.5, {
+        tween(this.owl).to(0.5, {
+            rotation: leftAngle
+        })
+        .to(0.5, {
+            rotation: rightAngle
+        })
+        .to(0.5, {
+            rotation: Quat.IDENTITY
+        })
+        .start()
+
+        tween(this.owlPortrait).to(0.5, {
             rotation: leftAngle
         })
         .to(0.5, {

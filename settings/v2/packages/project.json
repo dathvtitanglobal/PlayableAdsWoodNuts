@@ -89,5 +89,13 @@
       "name": "LAY_1",
       "value": 1
     }
-  ]
+  ],
+  "general": {
+    "designResolution": {
+      "width": 1920,
+      "height": 1080,
+      "fitWidth": false,
+      "fitHeight": true
+    }
+  }
 }
