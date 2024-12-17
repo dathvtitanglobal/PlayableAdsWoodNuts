@@ -2,6 +2,7 @@ import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, 
 import { Bolt } from './Bolt';
 import { Timber } from './Timber';
 import { Hole } from './Hole';
+import super_html_playable from './super_html_playable';
 const { ccclass, property } = _decorator;
 
 @ccclass('GameController')
@@ -73,6 +74,9 @@ export class GameController extends Component {
     private isIQShowed = false
 
     start() {
+
+        super_html_playable.game_start();
+
        GameController.instance = this
 
        this.listTimber = this.getComponentsInChildren(Timber)
@@ -449,7 +453,23 @@ export class GameController extends Component {
 
     public redirectToStore()
     {
+        this.on_click_download()
+    }
 
+    onLoad(): void {
+        const androidUrl = "https://play.google.com/store/apps/details?id=ttg.puzzle.tile.triple.match.rescue.game";
+        const iosUrl = "";
+        super_html_playable.set_google_play_url(androidUrl);
+        super_html_playable.set_app_store_url(iosUrl);
+    }
+
+    on_click_game_end() {
+        super_html_playable.game_end();
+    }
+
+    on_click_download() {
+        super_html_playable.download();
+        super_html_playable.game_end();
     }
 }
 
