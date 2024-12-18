@@ -1,4 +1,4 @@
-import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, Input, input, instantiate, Label, log, Node, ParticleSystem2D, Prefab, Quat, Skeleton, sp, Tween, tween, Vec2, Vec3, Widget } from 'cc';
+import { _decorator, Camera, Component, director, EventMouse, EventTouch, game, Game, Input, input, instantiate, Label, log, Node, ParticleSystem2D, PhysicsSystem2D, Prefab, Quat, Skeleton, sp, Tween, tween, Vec2, Vec3, Widget } from 'cc';
 import { Bolt } from './Bolt';
 import { Timber } from './Timber';
 import { Hole } from './Hole';
@@ -107,10 +107,18 @@ export class GameController extends Component {
 
         this.handleOrientation()
 
-    //    window.addEventListener("orientationchange", function() {
-    //         log("Orientation change here")
-    //         this.handleOrientation()
-    //     }.bind(this) )
+       window.addEventListener("orientationchange", function() {
+            log("Orientation change here")
+            //this.enableTimbersPhysic(false)
+            this.handleOrientation()
+            // this.enableTimbersPhysic(true)
+            // this.handleOrientation()
+
+            // setTimeout(() => {
+            //     this.enableTimbersPhysic(true)
+                
+            // }, 1000)
+        }.bind(this) )
        
     }
     
@@ -131,6 +139,34 @@ export class GameController extends Component {
         // log("Window orient: ", window.screen.orientation.type)
         // log("Window angle:" +window.screen.orientation.angle)
     }
+
+
+    public enableTimbersPhysic(active: boolean)
+    {
+        if(active)
+        {
+            // setTimeout(() => {
+            //     PhysicsSystem2D.instance.enable = active
+            // }, 1000)
+            PhysicsSystem2D.instance.enable = active
+            
+        }
+        else
+        {
+            PhysicsSystem2D.instance.enable = active
+            //PhysicsSystem2D.instance.off
+        }
+
+        for(var i =0; i<this.listTimber.length; i++)
+        {
+
+            this.listTimber[i].checkEnablePhysic()
+            // this.listTimber[i].rigidbody.enabled = active
+            // this.listTimber[i].hingeJoint.enabled = active
+            
+        }
+    }
+
 
     handleOrientation()
     {

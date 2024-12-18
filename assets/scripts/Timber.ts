@@ -146,7 +146,10 @@ export class Timber extends Component {
             //this.hingeJoint.connectedAnchor = this.getLastHoleHaveBoltInBoard().node.position.toVec2()
             var localPoint = new Vec3()
             this.hingeJoint.anchor = this.node.inverseTransformPoint(localPoint, this.getLastHoleHaveBoltInBoard().node.worldPosition).toVec2()
-            this.hingeJoint.connectedAnchor = this.getLastHoleHaveBoltInBoard().node.worldPosition.toVec2()
+            this.hingeJoint.collideConnected = true
+            this.hingeJoint.connectedBody = GameController.instance.getBoltAtPos(this.getLastHoleHaveBoltInBoard().node.worldPosition).getComponent(RigidBody2D)
+            this.hingeJoint.connectedAnchor = Vec2.ZERO
+            //this.hingeJoint.connectedAnchor = this.getLastHoleHaveBoltInBoard().node.worldPosition.toVec2()
             this.hingeJoint.enabled = true
 
             this.rigidbody.type = ERigidBody2DType.Dynamic
