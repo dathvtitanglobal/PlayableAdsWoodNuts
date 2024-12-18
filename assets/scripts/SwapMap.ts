@@ -1,4 +1,5 @@
 import { _decorator, Component, EventTouch, Input, log, Node, sp, Tween, tween, Vec3 } from 'cc';
+import playableHelper from './helper/helper';
 const { ccclass, property } = _decorator;
 
 @ccclass('SwapMap')
@@ -26,7 +27,7 @@ export class SwapMap extends Component {
 
         this.isSwapping = true
         this.StartSwap()
-        this.node.on(Input.EventType.MOUSE_UP, this.onTouch, this)
+        this.node.on(Input.EventType.TOUCH_START, this.onTouch, this)
         this.hand.active = false
 
     }
@@ -38,6 +39,7 @@ export class SwapMap extends Component {
     onTouch(event: EventTouch)
     {
         log("Redirect to store")
+        playableHelper.redirect()
     }
 
     private StartSwap()

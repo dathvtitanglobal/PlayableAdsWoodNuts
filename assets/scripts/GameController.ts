@@ -3,6 +3,7 @@ import { Bolt } from './Bolt';
 import { Timber } from './Timber';
 import { Hole } from './Hole';
 import super_html_playable from './super_html_playable';
+import playableHelper from './helper/helper';
 const { ccclass, property } = _decorator;
 
 @ccclass('GameController')
@@ -80,9 +81,11 @@ export class GameController extends Component {
 
     start() {
 
-        super_html_playable.game_start();
+        // super_html_playable.game_start();
 
-        super_html_playable.game_ready()
+        // super_html_playable.game_ready()
+
+        playableHelper.gameStart()
 
         GameController.instance = this
 
@@ -107,18 +110,22 @@ export class GameController extends Component {
 
         this.handleOrientation()
 
-       window.addEventListener("orientationchange", function() {
+        screen.orientation.addEventListener("change", (event) => {
             log("Orientation change here")
-            //this.enableTimbersPhysic(false)
             this.handleOrientation()
-            // this.enableTimbersPhysic(true)
-            // this.handleOrientation()
+        });
+    //    window.addEventListener("orientationchange", function() {
+    //         log("Orientation change here")
+    //         //this.enableTimbersPhysic(false)
+    //         this.handleOrientation()
+    //         // this.enableTimbersPhysic(true)
+    //         // this.handleOrientation()
 
-            // setTimeout(() => {
-            //     this.enableTimbersPhysic(true)
+    //         // setTimeout(() => {
+    //         //     this.enableTimbersPhysic(true)
                 
-            // }, 1000)
-        }.bind(this) )
+    //         // }, 1000)
+    //     }.bind(this) )
        
     }
     
@@ -170,7 +177,8 @@ export class GameController extends Component {
 
     handleOrientation()
     {
-        if(screen.orientation.type == "landscape-primary")
+        log("Orientation type: ", screen.orientation.type)
+        if(screen.orientation.type == "landscape-primary" || screen.orientation.type == "landscape-secondary")
         {
             this.portraitUI.active = false
             this.landscapeUI.active = true
@@ -193,7 +201,7 @@ export class GameController extends Component {
             //     this.gameBoard.setScale(new Vec3(1.7, 1.7, 1.7))
             // }
         }
-        else if(screen.orientation.type == "portrait-primary")
+        else if(screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary")
         {
             this.portraitUI.active = true
             this.landscapeUI.active = false
@@ -502,6 +510,7 @@ export class GameController extends Component {
             log("End game and redirect to store")
             super_html_playable.game_end()
             this.isAlwaysRedirectToStore = true
+            playableHelper.gameEnd()
             this.redirectToStore()
         }
     }
@@ -551,13 +560,17 @@ export class GameController extends Component {
     public redirectToStore()
     {
         this.on_click_download()
+        playableHelper.redirect()
     }
 
     onLoad(): void {
-        const androidUrl = "https://play.google.com/store/apps/details?id=ttg.puzzle.tile.triple.match.rescue.game";
+        const androidUrl = "https://play.google.com/store/apps/details?id=ttg.woodscrew.puzzle.wood.nuts.bolts";
         const iosUrl = "";
         super_html_playable.set_google_play_url(androidUrl);
         super_html_playable.set_app_store_url(iosUrl);
+
+
+        playableHelper.setStoreUrl(iosUrl, androidUrl)
 
         //window.
     }
