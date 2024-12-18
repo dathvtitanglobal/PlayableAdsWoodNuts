@@ -9,15 +9,30 @@ export class super_html_playable {
 
     game_end() {
         console.log("game end");
+        // //@ts-ignore
+        // window.super_html && super_html.game_end();
         //@ts-ignore
-        window.super_html && super_html.game_end();
+        window.gameEnd && window.gameEnd();
+        //@ts-ignore
+        window.install && window.install();
     }
 
     game_start() {
         console.log("game start");
         //@ts-ignore
         window.super_html && super_html.game_start();
+        //gameStart()
     }
+
+    game_ready()
+    {
+        console.log("game ready")
+        //@ts-ignore
+        window.gameReady && window.gameReady();
+    }
+
+
+
     /**
      * 是否隐藏下载按钮，意味着使用平台注入的下载按钮
      * channel : google
@@ -51,6 +66,19 @@ export class super_html_playable {
         window.super_html && (super_html.appstore_url = url);
     }
 
+    
+
 
 }
 export default new super_html_playable();
+
+export function gameClose()
+{
+
+}
+
+export function gameStart() 
+{
+    
+}
+

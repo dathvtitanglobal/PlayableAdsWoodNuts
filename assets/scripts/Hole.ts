@@ -2,6 +2,7 @@ import { _decorator, Collider2D, Component, Contact2DType, director, EventTouch,
 import { Bolt } from './Bolt';
 import { GameController } from './GameController';
 import { Timber } from './Timber';
+import { AudioManager } from './AudioManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('Hole')
@@ -103,6 +104,10 @@ export class Hole extends Component {
 
         if(!this.canScrew())
         {
+            if(this.boltScrewedIn == null && !this.isHoleOnTimber)
+            {
+                AudioManager.instance.playSoundCannotScrew()
+            }
             log("Cannot screw")
             return
         }

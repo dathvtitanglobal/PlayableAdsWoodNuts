@@ -162,7 +162,7 @@
       "__uuid__": "f639ceb5-7a0a-431d-a0e3-ead0c018e71c@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
-    "_totalParticles": 50,
+    "_totalParticles": 25,
     "_startColor": {
       "__type__": "cc.Color",
       "r": 255,
@@ -207,6 +207,7 @@
       "__id__": 0
     },
     "fileId": "b1LYO24DxLOq3Pa2ux7WFn",
+    "instance": null,
     "targetOverrides": null
   }
 ]

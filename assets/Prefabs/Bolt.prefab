@@ -157,7 +157,7 @@
       "__id__": 4
     },
     "clipScrew": {
-      "__uuid__": "3ee01d55-19c6-48d0-9425-ca34959d5a08",
+      "__uuid__": "c44edcf9-e87f-4b0f-bb1f-986d002dea27",
       "__expectedType__": "cc.AudioClip"
     },
     "_id": ""
@@ -239,6 +239,7 @@
       "__id__": 0
     },
     "fileId": "43VGEcFndBnrn8eudEqFbA",
-    "instance": null
+    "instance": null,
+    "targetOverrides": null
   }
 ]

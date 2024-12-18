@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, Input, log, Node, Tween, tween, Vec3 } from 'cc';
+import { _decorator, Component, EventTouch, Input, log, Node, sp, Tween, tween, Vec3 } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('SwapMap')
@@ -8,6 +8,9 @@ export class SwapMap extends Component {
 
     @property([Node])
     listPlaceHolder: Node[] = []
+
+    @property(Node)
+    hand: Node
     
     private indexMove: number[] = []
 
@@ -24,6 +27,7 @@ export class SwapMap extends Component {
         this.isSwapping = true
         this.StartSwap()
         this.node.on(Input.EventType.MOUSE_UP, this.onTouch, this)
+        this.hand.active = false
 
     }
 
@@ -43,6 +47,17 @@ export class SwapMap extends Component {
         {
             return
         }
+
+        this.hand.active = true
+        this.hand.position = new Vec3(100, this.hand.position.y, this.hand.position.z)
+        var anim = this.hand.getChildByName("Hand").getComponent(sp.Skeleton).setAnimation(0, "animation", false)
+        tween(this.hand).to(anim.animation.duration, {
+            position: new Vec3(-100, this.hand.position.y, this.hand.position.z)
+        }, {
+            onComplete: () => {
+                this.hand.active = false
+            }
+        }).start()
 
         // tween(this.listMapSwaping[0]).to(1, {
         //     worldPosition: this.listPlaceHolder[this.indexMove[1]].worldPosition
@@ -71,7 +86,7 @@ export class SwapMap extends Component {
                 toScale = new Vec3(1.1, 1.1, 1.1)
             }
 
-            tween(this.listMapSwaping[i]).to(1, {
+            tween(this.listMapSwaping[i]).to(anim.animation.duration, {
                 worldPosition: this.listPlaceHolder[this.indexMove[i]].worldPosition,
                 scale: toScale
                 

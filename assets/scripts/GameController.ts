@@ -1,4 +1,4 @@
-import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, Input, input, instantiate, Label, log, Node, ParticleSystem2D, Prefab, Quat, Skeleton, sp, tween, Vec2, Vec3, Widget } from 'cc';
+import { _decorator, Camera, Component, director, EventMouse, EventTouch, Game, Input, input, instantiate, Label, log, Node, ParticleSystem2D, Prefab, Quat, Skeleton, sp, Tween, tween, Vec2, Vec3, Widget } from 'cc';
 import { Bolt } from './Bolt';
 import { Timber } from './Timber';
 import { Hole } from './Hole';
@@ -50,6 +50,9 @@ export class GameController extends Component {
     @property(Node)
     gameBoard: Node
 
+    @property(Node)
+    bonusScore: Node
+
 
     public static instance: GameController
 
@@ -73,32 +76,36 @@ export class GameController extends Component {
 
     private isIQShowed = false
 
+    private tweenUpdate: Tween<Node>
+
     start() {
 
         super_html_playable.game_start();
 
-       GameController.instance = this
+        super_html_playable.game_ready()
 
-       this.listTimber = this.getComponentsInChildren(Timber)
+        GameController.instance = this
 
-       this.listHole = this.getComponentsInChildren(Hole)
+        this.listTimber = this.getComponentsInChildren(Timber)
 
-       this.listBolt = this.getComponentsInChildren(Bolt)
+        this.listHole = this.getComponentsInChildren(Hole)
 
-       this.activeHand(this.listBolt[0].node.worldPosition)
+        this.listBolt = this.getComponentsInChildren(Bolt)
 
-       input.on(Input.EventType.MOUSE_UP, this.onMouseUp, this);
+        this.activeHand(this.listBolt[0].node.worldPosition)
 
-       input.on(Input.EventType.TOUCH_START, this.onTouchStart, this)
+        //input.on(Input.EventType.MOUSE_UP, this.onMouseUp, this);
 
-       this.textIQ.string = this.iqNum + ""
-       this.textIQPortrait.string = this.iqNum + ""
+        input.on(Input.EventType.TOUCH_START, this.onTouchStart, this)
 
-       setTimeout(() => {
-            this.checkLose()
-       }, 10000)
+        this.textIQ.string = this.iqNum + ""
+        this.textIQPortrait.string = this.iqNum + ""
 
-       this.handleOrientation()
+        setTimeout(() => {
+                this.checkLose()
+        }, 10000)
+
+        this.handleOrientation()
 
     //    window.addEventListener("orientationchange", function() {
     //         log("Orientation change here")
@@ -183,14 +190,48 @@ export class GameController extends Component {
         this.textIQ.string = parseInt(tempIQ + "") + ""
         this.textIQPortrait.string = parseInt(tempIQ + "") + ""
         this.iqNum += delta
-        tween({value: tempIQ}).to(0.5, {value: this.iqNum}, {
-            onUpdate: target => {
-                tempIQ = target.value
-                this.textIQ.string = parseInt(tempIQ + "") + ""
-                this.textIQPortrait.string = parseInt(tempIQ + "") + ""
+
+        var target = new Vec3()
+
+        if(delta <= 5)
+        {
+            if(this.tweenUpdate != null)
+            {
+                this.tweenUpdate.stop();
+                this.tweenUpdate = null
             }
-        })
-        .start()
+
+            this.bonusScore.scale = new Vec3(2, 2, 2)
+            this.bonusScore.position = Vec3.ZERO
+            this.tweenUpdate = tween(this.bonusScore).to(0.5, {
+                scale: Vec3.ONE
+            }, {onComplete: () => {
+                tween({value: tempIQ}).to(0.5, {value: this.iqNum}, {
+                    onUpdate: target => {
+                        tempIQ = target.value
+                        this.textIQ.string = parseInt(tempIQ + "") + ""
+                        this.textIQPortrait.string = parseInt(tempIQ + "") + ""
+                    }
+                }).start()
+            }})
+            .to(0.2, {
+                position: this.handAnim.parent.inverseTransformPoint(target, this.textIQ.node.activeInHierarchy? this.textIQ.node.worldPosition: this.textIQPortrait.node.worldPosition),
+                scale: Vec3.ZERO
+            })
+            .start()
+
+            
+        }
+        else
+        {
+            tween({value: tempIQ}).to(0.5, {value: this.iqNum}, {
+                onUpdate: target => {
+                    tempIQ = target.value
+                    this.textIQ.string = parseInt(tempIQ + "") + ""
+                    this.textIQPortrait.string = parseInt(tempIQ + "") + ""
+                }
+            }).start()
+        }
     }
 
     public showIQ()
@@ -252,6 +293,7 @@ export class GameController extends Component {
         if(hole != null)
         {
             log("Touch Hole here")
+            this.deActiveHand()
             hole.onTouch()
         }
     }
@@ -322,7 +364,7 @@ export class GameController extends Component {
     public screwToHole(hole: Hole, bolt: Bolt)
     {
         log("Screw To Hole")
-        this.playTapScrewFx(hole.node.position)
+        this.playTapScrewFx(hole.node.worldPosition)
         hole.boltScrewedIn = bolt
         //bolt.node.setParent(hole.node)
         bolt.node.setWorldPosition(hole.node.worldPosition) 
@@ -388,7 +430,7 @@ export class GameController extends Component {
         
         this.handAnim.worldPosition = pos
         var track = this.handAnim.getChildByName("Hand").getComponent(sp.Skeleton).setAnimation(0, "animation", true) 
-        this.loopBoltFx(pos, track.animation.duration)
+        //this.loopBoltFx(pos, track.animation.duration)
     }
 
     private loopBoltFx(pos: Vec3, duration: number)
@@ -422,6 +464,7 @@ export class GameController extends Component {
         if(countActiveTimber <= 2)
         {
             log("End game and redirect to store")
+            super_html_playable.game_end()
             this.isAlwaysRedirectToStore = true
             this.redirectToStore()
         }
@@ -479,6 +522,8 @@ export class GameController extends Component {
         const iosUrl = "";
         super_html_playable.set_google_play_url(androidUrl);
         super_html_playable.set_app_store_url(iosUrl);
+
+        //window.
     }
 
     on_click_game_end() {
@@ -489,6 +534,8 @@ export class GameController extends Component {
         super_html_playable.download();
         super_html_playable.game_end();
     }
+
+    
 }
 
 

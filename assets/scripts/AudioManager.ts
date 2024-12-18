@@ -15,6 +15,9 @@ export class AudioManager extends Component {
     @property(AudioClip)
     timberCollide: AudioClip
 
+    @property(AudioClip)
+    cannotScrew: AudioClip
+
     start() {
         AudioManager.instance = this
     }
@@ -33,6 +36,11 @@ export class AudioManager extends Component {
     public playSoundTimberCollide()
     {
         this.playSoundFx(this.timberCollide)
+    }
+
+    public playSoundCannotScrew()
+    {
+        this.playSoundFx(this.cannotScrew)
     }
 
 }

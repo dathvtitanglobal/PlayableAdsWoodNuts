@@ -53,7 +53,18 @@ export class Bolt extends Component {
         log("Bolt Touch here")
         GameController.instance.showIQ()
         GameController.instance.setSelectedBolt(this)
-        GameController.instance.deActiveHand()
+        if(GameController.instance.handAnim.active)
+        {
+            for(var i = 0; i<GameController.instance.listHole.length; i++)
+            {
+                var hole = GameController.instance.listHole[i]
+                if(hole.canScrew())
+                {
+                    GameController.instance.activeHand(hole.node.worldPosition)
+                    break;
+                }
+            }
+        }
     }
 
     public playAnimationScrew(callback: () => void = null)
