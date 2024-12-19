@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, Input, log, Node, sp, Tween, tween, Vec3 } from 'cc';
+import { _decorator, Component, EventTouch, Input, log, macro, Node, screen, sp, Tween, tween, Vec3 } from 'cc';
 import playableHelper from './helper/helper';
 const { ccclass, property } = _decorator;
 
@@ -11,11 +11,16 @@ export class SwapMap extends Component {
     listPlaceHolder: Node[] = []
 
     @property(Node)
+    listPlaceNodeHolder: Node
+
+    @property(Node)
     hand: Node
     
     private indexMove: number[] = []
 
     public isSwapping: boolean = false
+
+    defaultScale = Vec3.ONE
 
 
     start() {
@@ -25,15 +30,36 @@ export class SwapMap extends Component {
             this.indexMove.push(i)
         }
 
+        this.handleOrientation(screen.windowSize.width < screen.windowSize.height? macro.ORIENTATION_PORTRAIT: macro.ORIENTATION_LANDSCAPE)
+
         this.isSwapping = true
         this.StartSwap()
         this.node.on(Input.EventType.TOUCH_START, this.onTouch, this)
         this.hand.active = false
 
+        screen.on('orientation-change', this.handleOrientation, this);
+
     }
 
     update(deltaTime: number) {
         
+    }
+
+    handleOrientation(orientation: number)
+    {
+        if(orientation == macro.ORIENTATION_LANDSCAPE || orientation == macro.ORIENTATION_LANDSCAPE_LEFT || orientation == macro.ORIENTATION_LANDSCAPE_RIGHT)
+        {
+
+            this.defaultScale = new Vec3(1, 1, 1)
+            
+        }
+        else if(orientation == macro.ORIENTATION_PORTRAIT || orientation == macro.ORIENTATION_PORTRAIT_UPSIDE_DOWN)
+        {
+
+            this.defaultScale = new Vec3(0.8, 0.8, 0.8)
+        }
+
+        this.listPlaceNodeHolder.scale = this.defaultScale
     }
 
     onTouch(event: EventTouch)
@@ -81,11 +107,11 @@ export class SwapMap extends Component {
             log("Index move i", this.indexMove[i])
 
             //this.listMapSwaping[i].setParent(this.listPlaceHolder[this.indexMove[i]])
-            let toScale = Vec3.ONE
+            let toScale = this.defaultScale
             if(this.indexMove[i] == 2)
             {
                 this.listMapSwaping[i].setSiblingIndex(2)
-                toScale = new Vec3(1.1, 1.1, 1.1)
+                toScale = new Vec3(1.1 * toScale.x, 1.1 * toScale.y, 1.1 * toScale.z)
             }
 
             tween(this.listMapSwaping[i]).to(anim.animation.duration, {

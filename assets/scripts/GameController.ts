@@ -84,6 +84,8 @@ export class GameController extends Component {
 
     private isIQShowed = false
 
+    private portraitScale = Vec3.ONE
+
     private tweenUpdate: Tween<Node>
 
     start() {
@@ -95,6 +97,8 @@ export class GameController extends Component {
         playableHelper.gameStart()
 
         GameController.instance = this
+
+        this.portraitScale = this.gameBoard.scale
 
         this.listTimber = this.getComponentsInChildren(Timber)
 
@@ -195,7 +199,7 @@ export class GameController extends Component {
             this.landscapeUI.active = true
             this.gameBoard.getComponent(Widget).horizontalCenter = this.horizontalCenterOffset.valueOf()
             this.gameBoard.getComponent(Widget).verticalCenter = 0
-            this.gameBoard.setScale(Vec3.ONE)
+            //this.gameBoard.setScale(this.portraitScale)
             // if((screen.orientation.angle / 90) % 2 == 0){
             //     this.portraitUI.active = false
             //     this.landscapeUI.active = true
