@@ -26,7 +26,7 @@ export class Timber extends Component {
 
     public deltaDistance = 10
 
-    public layerIndex = [2,3,6,7,8,9,10,11,12,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
+    public layerIndex = [2,3,6,7,8,9,10,11,12,18,19,20,21,22,23,24,25,26,27,28,29,30,31, 14]
 
     start() {
         this.collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this)
