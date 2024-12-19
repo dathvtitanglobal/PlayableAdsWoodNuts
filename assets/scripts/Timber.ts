@@ -26,19 +26,27 @@ export class Timber extends Component {
 
     public deltaDistance = 10
 
+    public layerIndex = [2,3,6,7,8,9,10,11,12,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
+
     start() {
         this.collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this)
         this.getListHole()
+
+        var listCollider = this.getComponents(Collider2D)
+        for(var i=0; i<listCollider.length; i++)
+        {
+            var layer = parseInt(this.node.parent.name)
+            listCollider[i].group = 1 << this.layerIndex[layer - 1]
+        }
       
         var newBoxCollider = this.addComponent(BoxCollider2D)
-        newBoxCollider.size = new Size(this.timber.contentSize.x * 0.6, this.timber.contentSize.y * 0.6)
+        newBoxCollider.size = new Size(this.timber.contentSize.x * 0.6, this.timber.contentSize.y * this.timber.node.scale.x)
 
         var offset = new Vec3()
         this.node.inverseTransformPoint(offset, this.timber.node.worldPosition)
         newBoxCollider.offset = offset.toVec2()
         newBoxCollider.group = 1<<17
         newBoxCollider.restitution = 0.25
-
 
         setTimeout(() => {
             this.checkEnablePhysic()

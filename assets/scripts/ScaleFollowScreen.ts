@@ -9,6 +9,9 @@ export class ScaleFollowScreen extends Component {
 
     //sizeBegin = this.getComponent(UITransform).contentSize;
 
+    protected start(): void {
+        //screen.
+    }
 
     update(deltaTime: number) {
         // if (screen.windowSize.width < screen.windowSize.height){

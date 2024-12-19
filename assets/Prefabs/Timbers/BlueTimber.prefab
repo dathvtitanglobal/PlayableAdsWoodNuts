@@ -1568,7 +1568,9 @@
     "hingeJoint": {
       "__id__": 80
     },
-    "timber": null,
+    "timber": {
+      "__id__": 7
+    },
     "_id": ""
   },
   {
@@ -1790,6 +1792,7 @@
       "__id__": 0
     },
     "fileId": "345avWxO9J+rh2Jmvmsnfi",
+    "instance": null,
     "targetOverrides": null
   }
 ]

@@ -1,4 +1,5 @@
-import { _decorator, Camera, Component, director, EventMouse, EventTouch, game, Game, Input, input, instantiate, Label, log, Node, ParticleSystem2D, PhysicsSystem2D, Prefab, Quat, Skeleton, sp, Tween, tween, Vec2, Vec3, Widget } from 'cc';
+import { _decorator, Camera, Component, director, EventMouse, EventTouch, game, Game, Input, input, instantiate, Label, log, macro, Node, ParticleSystem2D, PhysicsSystem2D, Prefab, Quat, Skeleton, sp, Tween, tween, Vec2, Vec3, Widget } from 'cc';
+import { screen as ccScreen } from 'cc';
 import { Bolt } from './Bolt';
 import { Timber } from './Timber';
 import { Hole } from './Hole';
@@ -8,6 +9,12 @@ const { ccclass, property } = _decorator;
 
 @ccclass('GameController')
 export class GameController extends Component {
+
+    @property(Number)
+    horizontalCenterOffset: Number = 0
+
+    @property(Number)
+    verticalCenterOffset: Number = 0
 
     @property(Node)
     handAnim: Node
@@ -108,12 +115,15 @@ export class GameController extends Component {
                 this.checkLose()
         }, 10000)
 
-        this.handleOrientation()
+        this.handleOrientation(ccScreen.windowSize.width < ccScreen.windowSize.height? macro.ORIENTATION_PORTRAIT: macro.ORIENTATION_LANDSCAPE)
 
-        screen.orientation.addEventListener("change", (event) => {
-            log("Orientation change here")
-            this.handleOrientation()
-        });
+        // screen.orientation.addEventListener("change", (event) => {
+        //     log("Orientation change here")
+        //     this.handleOrientation()
+        // });
+
+        ccScreen.on('orientation-change', this.handleOrientation, this);
+
     //    window.addEventListener("orientationchange", function() {
     //         log("Orientation change here")
     //         //this.enableTimbersPhysic(false)
@@ -175,14 +185,15 @@ export class GameController extends Component {
     }
 
 
-    handleOrientation()
+    handleOrientation(orientation: number)
     {
-        log("Orientation type: ", screen.orientation.type)
-        if(screen.orientation.type == "landscape-primary" || screen.orientation.type == "landscape-secondary")
+        log("Orientation type: ", orientation)
+        this.activeHand(this.listBolt[0].node.worldPosition)
+        if(orientation == macro.ORIENTATION_LANDSCAPE || orientation == macro.ORIENTATION_LANDSCAPE_LEFT || orientation == macro.ORIENTATION_LANDSCAPE_RIGHT)
         {
             this.portraitUI.active = false
             this.landscapeUI.active = true
-            this.gameBoard.getComponent(Widget).horizontalCenter = -261
+            this.gameBoard.getComponent(Widget).horizontalCenter = this.horizontalCenterOffset.valueOf()
             this.gameBoard.getComponent(Widget).verticalCenter = 0
             this.gameBoard.setScale(Vec3.ONE)
             // if((screen.orientation.angle / 90) % 2 == 0){
@@ -201,12 +212,12 @@ export class GameController extends Component {
             //     this.gameBoard.setScale(new Vec3(1.7, 1.7, 1.7))
             // }
         }
-        else if(screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary")
+        else if(orientation == macro.ORIENTATION_PORTRAIT || orientation == macro.ORIENTATION_PORTRAIT_UPSIDE_DOWN)
         {
             this.portraitUI.active = true
             this.landscapeUI.active = false
             this.gameBoard.getComponent(Widget).horizontalCenter = 0
-            this.gameBoard.getComponent(Widget).verticalCenter = -100
+            this.gameBoard.getComponent(Widget).verticalCenter = this.verticalCenterOffset.valueOf()
             //this.gameBoard.setScale(new Vec3(0.8, 0.8))
             // if((screen.orientation.angle / 90) % 2 == 0){
             //     this.portraitUI.active = true
