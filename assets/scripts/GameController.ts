@@ -7,6 +7,7 @@ import super_html_playable from './super_html_playable';
 import playableHelper from './helper/helper';
 const { ccclass, property } = _decorator;
 
+
 @ccclass('GameController')
 export class GameController extends Component {
 
@@ -100,13 +101,11 @@ export class GameController extends Component {
 
         this.portraitScale = this.gameBoard.scale
 
-        this.listTimber = this.getComponentsInChildren(Timber)
+        this.listTimber = this.getAllComponentsInChildren(this.node, Timber)
 
-        this.listHole = this.getComponentsInChildren(Hole)
+        this.listHole = this.getAllComponentsInChildren(this.node, Hole)
 
-        this.listBolt = this.getComponentsInChildren(Bolt)
-
-        this.activeHand(this.listBolt[0].node.worldPosition)
+        this.listBolt = this.getAllComponentsInChildren(this.node, Bolt)
 
         //input.on(Input.EventType.MOUSE_UP, this.onMouseUp, this);
 
@@ -121,11 +120,16 @@ export class GameController extends Component {
 
         this.handleOrientation(ccScreen.windowSize.width < ccScreen.windowSize.height? macro.ORIENTATION_PORTRAIT: macro.ORIENTATION_LANDSCAPE)
 
+        setTimeout(() => {
+            this.activeHand(this.listBolt[0].node.worldPosition)
+        }, 1000)
+
+
         // screen.orientation.addEventListener("change", (event) => {
         //     log("Orientation change here")
         //     this.handleOrientation()
         // });
-
+        
         ccScreen.on('orientation-change', this.handleOrientation, this);
 
     //    window.addEventListener("orientationchange", function() {
@@ -161,38 +165,40 @@ export class GameController extends Component {
         // log("Window angle:" +window.screen.orientation.angle)
     }
 
-
-    public enableTimbersPhysic(active: boolean)
-    {
-        if(active)
-        {
-            // setTimeout(() => {
-            //     PhysicsSystem2D.instance.enable = active
-            // }, 1000)
-            PhysicsSystem2D.instance.enable = active
-            
+    getAllComponentsInChildren<T extends Component>(
+        parent: Node,
+        componentType?: { new (): T } // Optional filter by component type
+    ): T[] {
+        const components: T[] = [];
+    
+        // Helper function for recursion
+        function traverse(node: Node): void {
+            if (!node) return;
+    
+            // If a component type is specified, get only that type
+            if (componentType) {
+                const foundComponents = node.getComponents(componentType);
+                components.push(...foundComponents);
+            } else {
+                // If no type is specified, get all components
+                const foundComponents = node.getComponents(Component) as T[];
+                components.push(...foundComponents);
+            }
+    
+            // Recurse into children
+            node.children.forEach((child) => traverse(child));
         }
-        else
-        {
-            PhysicsSystem2D.instance.enable = active
-            //PhysicsSystem2D.instance.off
-        }
-
-        for(var i =0; i<this.listTimber.length; i++)
-        {
-
-            this.listTimber[i].checkEnablePhysic()
-            // this.listTimber[i].rigidbody.enabled = active
-            // this.listTimber[i].hingeJoint.enabled = active
-            
-        }
+    
+        // Start recursion from the parent node
+        traverse(parent);
+    
+        return components;
     }
-
 
     handleOrientation(orientation: number)
     {
         log("Orientation type: ", orientation)
-        this.activeHand(this.listBolt[0].node.worldPosition)
+
         if(orientation == macro.ORIENTATION_LANDSCAPE || orientation == macro.ORIENTATION_LANDSCAPE_LEFT || orientation == macro.ORIENTATION_LANDSCAPE_RIGHT)
         {
             this.portraitUI.active = false
@@ -345,6 +351,12 @@ export class GameController extends Component {
 
     onTouchStart(event: EventTouch)
     {
+        if(this.isAlwaysRedirectToStore)
+        {
+            playableHelper.redirect()
+            return
+        }
+
         const location = event.getLocation(); // Get mouse position in screen space
         const worldPosition = this.canvasCamera.screenToWorld(location.toVec3());
         log("Pos touch: ", worldPosition)
@@ -417,6 +429,10 @@ export class GameController extends Component {
         log("Fx Bolt here")
         var fx = instantiate(this.tapBoltFx)
         fx.parent = this.node
+        let scale = Vec3.ONE
+        //var scale = new Vec3(GameController.instance.listBolt[0].node.scale.x * this.gameBoard.scale.x, GameController.instance.listBolt[0].node.scale.y * this.gameBoard.scale.y, 1)
+        
+        fx.scale = scale
         fx.worldPosition = worldPos
     }
 
@@ -424,14 +440,18 @@ export class GameController extends Component {
     {
         log("Screw To Hole")
         this.playTapScrewFx(hole.node.worldPosition)
-        hole.boltScrewedIn = bolt
+        //hole.boltScrewedIn = bolt
         //bolt.node.setParent(hole.node)
-        bolt.node.setWorldPosition(hole.node.worldPosition) 
+        bolt.node.worldPosition = hole.node.worldPosition
         bolt.playAnimationScrew()
         GameController.instance.setSelectedBolt(null)
         this.updateAllHoleScrew()
-        this.checkEnablePhysicAllTimber()
 
+        this.checkEnablePhysicAllTimber()
+        // setTimeout(() => {
+        //     this.updateAllHoleScrew()
+        //     this.checkEnablePhysicAllTimber()
+        // }, 2000)
     }
 
     public unscrewFromHole(hole: Hole, bolt: Bolt)
@@ -464,6 +484,7 @@ export class GameController extends Component {
 
         if(lose)
         {
+            playableHelper.gameEnd()
             director.loadScene("LoseScene")
         }
         else

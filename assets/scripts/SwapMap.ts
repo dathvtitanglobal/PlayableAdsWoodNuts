@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, Input, log, macro, Node, screen, sp, Tween, tween, Vec3 } from 'cc';
+import { _decorator, Button, Component, EventTouch, Input, log, macro, Node, screen, sp, Tween, tween, Vec3 } from 'cc';
 import playableHelper from './helper/helper';
 const { ccclass, property } = _decorator;
 
@@ -12,6 +12,9 @@ export class SwapMap extends Component {
 
     @property(Node)
     listPlaceNodeHolder: Node
+
+    @property(Button)
+    buttonReplay: Button
 
     @property(Node)
     hand: Node
@@ -38,7 +41,6 @@ export class SwapMap extends Component {
         this.hand.active = false
 
         screen.on('orientation-change', this.handleOrientation, this);
-
     }
 
     update(deltaTime: number) {
@@ -66,6 +68,10 @@ export class SwapMap extends Component {
     {
         log("Redirect to store")
         playableHelper.redirect()
+    }
+
+    buttonReplayClick () {
+       playableHelper.redirect()
     }
 
     private StartSwap()

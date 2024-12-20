@@ -70,10 +70,10 @@ export class Hole extends Component {
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         
         //this.overlapGameObjects.(otherCollider)
-        log('Collision started with:', otherCollider.node.name)
+        //log('Collision started with:', otherCollider.node.name)
         const index = this.overlapGameObjects.indexOf(otherCollider, 0);
         if (index < 0) {
-            log('Hole Collision started with:', otherCollider.node.name)
+            //log('Hole Collision started with:', otherCollider.node.name)
             this.overlapGameObjects.push(otherCollider);
         }
     }
@@ -84,7 +84,7 @@ export class Hole extends Component {
         log('Collision end with:', otherCollider.node.name)
         const index = this.overlapGameObjects.indexOf(otherCollider, 0);
         if (index >= 0) {
-            log('Hole Collision end with:', otherCollider.node.name)
+            //log('Hole Collision end with:', otherCollider.node.name)
             this.overlapGameObjects.splice(index, 1);
         }
     }
@@ -129,7 +129,7 @@ export class Hole extends Component {
             return
         }
 
-        GameController.instance.unscrewFromHole(bolt.holeScrewedIn, bolt)
+        //GameController.instance.unscrewFromHole(bolt.holeScrewedIn, bolt)
         GameController.instance.screwToHole(this, bolt)
     }
 
@@ -188,7 +188,7 @@ export class Hole extends Component {
 
     public updateBoltScrewIn()
     {
-        var boltChild = this.getComponentInChildren(Bolt) 
+        var boltChild = null
         if(boltChild == null)
         {
             this.boltScrewedIn =  GameController.instance.getBoltAtPos(this.node.worldPosition) 

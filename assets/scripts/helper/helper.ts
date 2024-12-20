@@ -5,7 +5,17 @@ class H5Playable {
       console.log("download");
   
       //@ts-ignore
-      if (typeof redirectStore !== "undefined") redirectStore();
+      if (window.redirectStore) redirectStore();
+
+      // //@ts-ignore
+      // if(accessStore) accessStore();
+
+      //@ts-ignore
+      window.install && window.install();
+
+      //@ts-ignore
+      if(typeof mraid != "undefined") mraid.open("https://play.google.com/store/apps/details?id=ttg.woodscrew.puzzle.wood.nuts.bolts")
+
     }
   
     /**
@@ -26,11 +36,14 @@ class H5Playable {
     /**
      * Game end method when game is over, adapt for Mintegral channel.
      */
-        gameEnd() {
+    gameEnd() {
       console.log("game end");
-  
+
       //@ts-ignore
-      if (typeof onGameEnd !== "undefined") onGameEnd();
+      window.gameEnd && window.gameEnd();
+  
+      // //@ts-ignore
+      // if (typeof onGameEnd !== "undefined") onGameEnd();
     }
   
     /**
@@ -42,7 +55,7 @@ class H5Playable {
     setStoreUrl(iosUrl: string, androidUrl: string) {
       console.log("set store url");
       //@ts-ignore
-      if (typeof setStoreUrl !== "undefined") setStoreUrl(iosUrl, androidUrl);
+      if (window.setStoreUrl) setStoreUrl(iosUrl, androidUrl);
     }
   }
   

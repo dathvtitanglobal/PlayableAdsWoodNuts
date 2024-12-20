@@ -24,7 +24,7 @@ export class Timber extends Component {
 
     public isActive = true
 
-    public deltaDistance = 10
+    public deltaDistance = 5
 
     public layerIndex = [2,3,6,7,8,9,10,11,12,18,19,20,21,22,23,24,25,26,27,28,29,30,31, 14]
 
@@ -55,7 +55,7 @@ export class Timber extends Component {
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
-        log('Collision started with:', otherCollider.node.name)
+        //log('Collision started with:', otherCollider.node.name)
         if(otherCollider.node.name == "BottomTrigger" && this.isActive)
         {
             this.isActive = false
@@ -64,7 +64,10 @@ export class Timber extends Component {
             // this.node.active = false
             //this.node.destroy()
             setTimeout(() => {
-                this.node.active = false
+                if(this.node != null)
+                {
+                    this.node.active = false
+                }
             }, 2000)
             GameController.instance.updateIQ(5)
             GameController.instance.checkAndPerformNextAction()
@@ -84,11 +87,19 @@ export class Timber extends Component {
     {
         if(this.listHole == null || this.listHole.length <= 0)
         {
-            //this.listHole = this.getAllComponentsInChildren(this.node, Hole)
-            this.listHole = this.getComponentsInChildren(Hole)
+            this.listHole = this.getAllComponentsInChildren(this.node, Hole)
+            //this.listHole = this.getComponentsInChildren(Hole)
         }
 
         return this.listHole
+    }
+
+    public updateAllListHole()
+    {
+        for(var i =0; i<this.listHole.length; i++)
+        {
+            this.listHole[i].updateBoltScrewIn()
+        }
     }
 
     public countBoltScrewedIn(): number
@@ -113,32 +124,45 @@ export class Timber extends Component {
 
     public getLastHoleHaveBoltInBoard(): Hole
     {
+        var res= null
+        var countHoleHaveBolt = 0
+        log("getLastHoleHaveBoltInBoard List hole count: ", this.listHole.length)
         for(let i =0; i<this.listHole.length; i++)
         {
-            var hole = this.listHole[i]
-            if(hole.getBoltScrewedIn() != null)
+           
+            
+            var hole = this.listHole[i] 
+            log("Hole pos x", hole.node.worldPosition.x)
+            log("Hole pos y", hole.node.worldPosition.y)
+            if(GameController.instance.getBoltAtPos(hole.node.worldPosition) != null)
             {
-                return hole
+                
+                res = hole
+                countHoleHaveBolt +=1
             }
             
         }
 
-        return null
+        log("getLastHoleHaveBoltInBoard: ", countHoleHaveBolt)
+
+        return res
     }
 
     public checkEnablePhysic()
     {
+        this.getListHole()
+        this.updateAllListHole()
         var numBoltScrewedIn = this.countBoltScrewedIn();
         log("Number Bolt Screwd in: " + this.countBoltScrewedIn())
 
         if(numBoltScrewedIn > 1)
         {
-            //this.hingeJoint.enabled = false
-            //this.rigidbody.type = ERigidBody2DType.Kinematic
+            this.hingeJoint.enabled = false
+            this.rigidbody.type = ERigidBody2DType.Kinematic
             //this.rigidbody.
 
-            // this.rigidbody.linearVelocity = Vec2.ZERO
-            // this.rigidbody.angularVelocity = 0
+            this.rigidbody.linearVelocity = Vec2.ZERO
+            this.rigidbody.angularVelocity = 0
             // this.rigidbody.angularDamping = 0;
             // this.rigidbody.linearDamping = 0;
         }
@@ -153,11 +177,15 @@ export class Timber extends Component {
 
             //this.hingeJoint.connectedAnchor = this.getLastHoleHaveBoltInBoard().node.position.toVec2()
             var localPoint = new Vec3()
-            this.hingeJoint.anchor = this.node.inverseTransformPoint(localPoint, this.getLastHoleHaveBoltInBoard().node.worldPosition).toVec2()
+
+            
+            
             this.hingeJoint.collideConnected = true
             this.hingeJoint.connectedBody = GameController.instance.getBoltAtPos(this.getLastHoleHaveBoltInBoard().node.worldPosition).getComponent(RigidBody2D)
             this.hingeJoint.connectedAnchor = Vec2.ZERO
             //this.hingeJoint.connectedAnchor = this.getLastHoleHaveBoltInBoard().node.worldPosition.toVec2()
+            
+            this.hingeJoint.anchor = this.node.inverseTransformPoint(localPoint, this.getLastHoleHaveBoltInBoard().node.worldPosition).toVec2()
             this.hingeJoint.enabled = true
 
             this.rigidbody.type = ERigidBody2DType.Dynamic
